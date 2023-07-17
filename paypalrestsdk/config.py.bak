@@ -1,8 +1,8 @@
-__version__ = "1.0"
-__pypi_username__ = "PunishMints"
-__pypi_packagename__ = "modified-paypalrestsdk"
-__github_username__ = "PunishMints"
-__github_reponame__ = "modified-paypalREST-sdk"
+__version__ = "1.13.1"
+__pypi_username__ = "paypal"
+__pypi_packagename__ = "paypalrestsdk"
+__github_username__ = "paypal"
+__github_reponame__ = "PayPal-Python-SDK"
 __endpoint_map__ = {
     "live": "https://api-m.paypal.com",
     "sandbox": "https://api-m.sandbox.paypal.com",
