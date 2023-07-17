@@ -9,13 +9,13 @@ class Payment(List, Find, Create, Post, Replace):
 
     Usage::
 
-        >>> payment_history = Payment.all({"count": 5})
+        >>> payment_histroy = Payment.all({"count": 5})
         >>> payment = Payment.find("<PAYMENT_ID>")
         >>> payment = Payment.new({"intent": "sale"})
         >>> payment.create()     # return True or False
         >>> payment.execute({"payer_id": 1234})  # return True or False
     """
-    path = "v1/payments/payment"
+    path = "v2/checkout/orders"
 
     def execute(self, attributes):
         return self.post('execute', attributes, self)
@@ -30,7 +30,7 @@ class BillingPlan(List, Create, Find, Replace):
     number of payments, their frequency and other details. Acts as a template
     for BillingAgreement, one BillingPlan can be used to create multiple
     agreements.
-    Wraps the v1/payments/billing-plans endpoint
+    Wraps the v1/payments/billing/plans endpoint
 
     https://developer.paypal.com/webapps/developer/docs/integration/direct/create-billing-plan/
 
@@ -38,27 +38,15 @@ class BillingPlan(List, Create, Find, Replace):
 
         >>> billing_plans = BillingPlan.all({'status': CREATED})
     """
-    path = "v1/payments/billing-plans"
+    path = "v1/billing/plans"
 
     def activate(self):
-        """Activate a billing plan, wraps billing plan replace."""
+        """activates a billing plan, wraps billing plan replace"""
         billing_plan_update_attributes = [{
             "op": "replace",
             "path": "/",
             "value": {
                 "state": "ACTIVE"
-            }
-        }]
-
-        return self.replace(billing_plan_update_attributes)
-
-    def inactivate(self):
-        """Inactivate a billing plan, wraps billing plan replace."""
-        billing_plan_update_attributes = [{
-            "op": "replace",
-            "path": "/",
-            "value": {
-                "state": "INACTIVE"
             }
         }]
 
@@ -79,7 +67,7 @@ class BillingAgreement(Create, Find, Replace, Post):
 
         >>> billing_agreement = BillingAgreement.find("<AGREEMENT_ID>")
     """
-    path = "v1/payments/billing-agreements"
+    path = "v1/billing/subscriptions"
 
     def suspend(self, attributes):
         return self.post('suspend', attributes, self)
@@ -187,7 +175,7 @@ class Capture(Find, Post):
         >>> capture = Capture.find("<CAPTURE_ID>")
         >>> refund = capture.refund({ "amount": { "currency": "USD", "total": "1.00" }})
     """
-    path = "v1/payments/capture"
+    path = "v2/checkout/orders"
 
     def refund(self, attributes):
         return self.post('refund', attributes, Refund)
@@ -205,10 +193,11 @@ class Order(Find, Post):
         >>> order = Order.find("<ORDER_ID>")
         >>> order.void()
     """
-    path = "v1/payments/orders"
+    path = "v2/checkout/orders"
 
-    def capture(self, attributes):
-        return self.post('capture', attributes, Order)
+    def capture(self):
+
+        return self.post('capture', {}, Order)
 
     def void(self):
         return self.post('do-void', {}, self)
